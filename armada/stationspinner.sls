@@ -140,6 +140,24 @@ migrate stationspinner:
       - cmd: stationspinner venv
       - cmd: ltree extension
 
+character_asset:
+  cmd.run:
+    - name: 'psql -f stationspinner/character/sql/asset.sql stationspinner'
+    - cwd: '/srv/www/stationspinner/web'
+    - user: stationspinner
+    - onlyif: 'test "$(psql -c "\d character_asset" stationspinner)" = "No relations found."'
+    - require:
+      - cmd: migrate stationspinner
+
+corporation_asset:
+  cmd.run:
+    - name: 'psql -f stationspinner/corporation/sql/asset.sql stationspinner'
+    - cwd: '/srv/www/stationspinner/web'
+    - user: stationspinner
+    - onlyif: 'test "$(psql -c "\d corporation_asset" stationspinner)" = "No relations found."'
+    - require:
+      - cmd: migrate stationspinner
+
 evespai grants:
   cmd.run:
     - name: '/srv/www/stationspinner/web/tools/fix_evespai_grants'
@@ -200,6 +218,7 @@ celerybeat initscript:
       - file: celerybeat config
 
 
+{% if not stationspinner.debug %}
 celeryd service:
   service.running:
     - name: stationspinner-worker
@@ -225,6 +244,8 @@ celerybeat service:
       - file: celerybeat initscript
       - file: celery rundir
       - file: celery logdir
+
+{% endif %}
 {#
 Installed and configured. Now we just need uwsgi and webserver to setup
 #}
@@ -237,18 +258,28 @@ uwsgi config:
 {#
 This should trigger the uwsgi emperor to start stationspinner
 #}
-#app enabled:
-#  file.symlink:
-#    - name: /etc/uwsgi/apps-enabled/stationspinner.ini
-#    - target: /etc/uwsgi/apps-available/stationspinner.ini
+{% if not stationspinner.debug %}
+uwsgi enabled:
+  file.symlink:
+    - name: /etc/uwsgi/apps-enabled/stationspinner.ini
+    - target: /etc/uwsgi/apps-available/stationspinner.ini
+{% endif %}
 
 bootstrap universe:
   cmd.run: 
     - name: 'source ../env/bin/activate; python manage.py runtask universe.update_universe'
     - user: stationspinner
     - cwd: '/srv/www/stationspinner/web'
+    - onlyif: 'test "$(psql -c "select count(*) from universe_apicall;" stationspinner)" -gt 50'
     - require:
       - cmd: migrate stationspinner
 
-    #- onlyif: 'test "psql -t -c "select count(*) from universe_apicall" stationspinner|tr -d \' \'" = "0"'
-
+{% for market in stationspinner.markets %}
+{{ market }} market indexing:
+  cmd.run: 
+    - name: 'source ../env/bin/activate; python manage.py addmarket "{{ market }}"'
+    - user: stationspinner
+    - cwd: '/srv/www/stationspinner/web'
+    - require:
+      - cmd: migrate stationspinner
+{% endfor %}
