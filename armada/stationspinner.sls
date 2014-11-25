@@ -36,6 +36,7 @@ stationspinner service directory:
     - user: stationspinner
     - group: stationspinner
 
+{% if not stationspinner.debug %}
 stationspinner code:
   git.latest:
     - name: https://github.com/kriberg/stationspinner.git
@@ -46,6 +47,7 @@ stationspinner code:
       - pkg: platform dependencies
       - user: stationspinner user
       - file: stationspinner service directory
+{% endif %}
 
 stationspinner venv:
   cmd.run:
