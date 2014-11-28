@@ -226,26 +226,32 @@ celeryd service:
     - name: stationspinner-worker
     - enable: True
     - running: True
-    - reload: True
-    - watch:
-      - cmd: migrate stationspinner
     - require:
       - file: celeryd initscript
       - file: celery rundir
       - file: celery logdir
+
+manual restart celeryd:
+  cmd.wait:
+    - name: service stationspinner-worker restart
+    - watch:
+      - cmd: migrate stationspinner
 
 celerybeat service:
   service.running:
     - name: stationspinner-beat
     - enable: True
     - running: True
-    - reload: True
-    - watch:
-      - cmd: migrate stationspinner
     - require:
       - file: celerybeat initscript
       - file: celery rundir
       - file: celery logdir
+
+manual restart beat:
+  cmd.wait:
+    - name: service stationspinner-beat stop; service stationspinner-beat start
+    - watch:
+      - cmd: migrate stationspinner
 
 {% endif %}
 {#
