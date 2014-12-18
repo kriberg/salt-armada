@@ -236,6 +236,7 @@ manual restart celeryd:
     - name: service stationspinner-worker restart
     - watch:
       - cmd: migrate stationspinner
+      - git: stationspinner code
 
 celerybeat service:
   service.running:
@@ -252,6 +253,7 @@ manual restart beat:
     - name: service stationspinner-beat stop; service stationspinner-beat start
     - watch:
       - cmd: migrate stationspinner
+      - git: stationspinner code
 
 {% endif %}
 {#
