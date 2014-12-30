@@ -1,0 +1,19 @@
+upstream stationspinner {
+    server unix:/srv/www/stationspinner/run/stationspinner.sock;
+}
+
+server {
+        server_name {{ armada.server_name }};
+        access_log /var/log/nginx/{{ armada.server_name }}_access.log;
+        error_log /var/log/nginx/{{ armada.server_name }}_error.log;
+
+	location /armada {
+		alias /srv/www/armada/app;
+	}
+
+    location / {
+        include     uwsgi_params;
+        uwsgi_pass  stationspinner;
+    }
+}
+
