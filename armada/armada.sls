@@ -9,19 +9,18 @@ armada service directory:
   file.directory:
     - name: /srv/www/armada
     - makedirs: True
-    - user: {{ armada.static-user }}
-    - group: {{ armada.static-group }}
+    - user: {{ armada.static_user }}
+    - group: {{ armada.static_group }}
 
 {% if not armada.debug %}
 armada code:
   git.latest:
     - name: https://github.com/kriberg/armada.git
     - target: /srv/www/armada/
-    - user: {{ armada.static-user }}
+    - user: {{ armada.static_user }}
     - require:
       - pkg: platform dependencies
       - file: armada service directory
-{% endif %}
 
 armada site config:
   file.managed:
@@ -33,6 +32,31 @@ armada site config:
     - require:
       - pkg: platform dependencies
 
+enabled site:
+  file.symlink:
+    - name: /etc/nginx/sites-enabled/armada-site
+    - target: /etc/nginx/sites-available/armada-site
+    - require:
+      - file: armada site config
+{% else %}
+armada site config:
+  file.managed:
+    - name: /etc/nginx/sites-available/armada-debug
+    - source: salt://armada/armada-debug.jinja
+    - template: jinja
+    - context:
+      armada: {{ armada|yaml }}
+    - require:
+      - pkg: platform dependencies
+
+enabled site:
+  file.symlink:
+    - name: /etc/nginx/sites-enabled/armada-debug
+    - target: /etc/nginx/sites-available/armada-debug
+    - require:
+      - file: armada site config
+{% endif %}
+
 
 nginx service:
   service.running:
@@ -42,6 +66,7 @@ nginx service:
     - require:
       - pkg: platform dependencies
       - file: armada site config
+      - file: enabled site
       {% if not armada.debug %}
       - git: armada code
       {% endif %}

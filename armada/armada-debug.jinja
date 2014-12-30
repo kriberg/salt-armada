@@ -1,0 +1,18 @@
+
+server {
+        server_name {{ armada.server_name }};
+        access_log /var/log/nginx/{{ armada.server_name }}_access.log;
+        error_log /var/log/nginx/{{ armada.server_name }}_error.log;
+
+	location /armada {
+		alias /srv/www/armada/app;
+	}
+
+        location / {
+		proxy_pass	http://localhost:8000;
+		proxy_redirect	off;
+		proxy_set_header	Host $host;
+        }
+
+}
+
