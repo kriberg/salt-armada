@@ -5,6 +5,7 @@ platform dependencies:
       - git
       - nginx
       - nodejs
+      - nodejs-legacy
       - npm
 
 armada service directory:
