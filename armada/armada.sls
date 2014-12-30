@@ -57,7 +57,6 @@ enabled site:
 npm bootstrap:
   npm.bootstrap:
     - name: /srv/www/armada
-    - user: {{ armada.static_user }}
     - require:
       - npm: javascript tools
       - file: armada service directory
@@ -66,10 +65,14 @@ bower bootstrap:
   cmd.run:
     - name: bower install
     - cwd: /srv/www/armada
-    - user: {{ armada.static_user }}
-    - group: {{ armada.static_group }}
     - require:
       - npm: npm bootstrap
+
+proper rights:
+  file.recurse:
+    - name: /srv/www/armada
+    - user: {{ armada.static_user }}
+    - group: {{ armada.static_group }}
 
 {% else %}
 
