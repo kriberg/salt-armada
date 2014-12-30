@@ -63,7 +63,7 @@ npm bootstrap:
 
 bower bootstrap:
   cmd.run:
-    - name: bower install
+    - name: bower install --allow-root
     - cwd: /srv/www/armada
     - require:
       - npm: npm bootstrap
