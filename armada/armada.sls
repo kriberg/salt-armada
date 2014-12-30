@@ -69,10 +69,13 @@ bower bootstrap:
       - npm: npm bootstrap
 
 proper rights:
-  file.recurse:
+  file.directory:
     - name: /srv/www/armada
     - user: {{ armada.static_user }}
     - group: {{ armada.static_group }}
+    - recurse:
+      - user
+      - group
 
 {% else %}
 
