@@ -4,6 +4,8 @@ platform dependencies:
     - names: 
       - git
       - nginx
+      - nodejs
+      - npm
 
 armada service directory:
   file.directory:
@@ -11,6 +13,18 @@ armada service directory:
     - makedirs: True
     - user: {{ armada.static_user }}
     - group: {{ armada.static_group }}
+    
+javascript tools:
+  npm.installed:
+    - pkgs:
+      - grunt-cli
+      - bower
+    - require:
+      - pkg: platform dependencies
+
+#
+# Code checkout and nginx config
+#
 
 {% if not armada.debug %}
 armada code:
@@ -38,7 +52,26 @@ enabled site:
     - target: /etc/nginx/sites-available/armada-site
     - require:
       - file: armada site config
+
+npm bootstrap:
+  npm.bootstrap:
+    - name: /srv/www/armada
+    - user: {{ armada.static_user }}
+    - require:
+      - npm: javascript tools
+      - file: armada service directory
+
+bower bootstrap:
+  cmd.run:
+    - name: bower install
+    - cwd: /srv/www/armada
+    - user: {{ armada.static_user }}
+    - group: {{ armada.static_group }}
+    - require:
+      - npm: npm bootstrap
+
 {% else %}
+
 armada site config:
   file.managed:
     - name: /etc/nginx/sites-available/armada-debug
@@ -57,6 +90,9 @@ enabled site:
       - file: armada site config
 {% endif %}
 
+#
+# Restart nginx
+#
 
 nginx service:
   service.running:
@@ -70,3 +106,6 @@ nginx service:
       {% if not armada.debug %}
       - git: armada code
       {% endif %}
+    - watch:
+      - file: armada site config
+      - file: enabled site
