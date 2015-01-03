@@ -1,3 +1,11 @@
+# /srv/pillar/armada/armada.sls
+armada:
+  debug: True
+  static_user: www-data
+  static_group: www-data
+  server_name: armada.home
+
+# /srv/pillar/armada/databases.sls
 postgres:
   pg_hba.conf: salt://postgres/pg_hba.conf
 
@@ -14,7 +22,11 @@ postgres:
 
   users:
     stationspinner:
-      password: 'asdf79ohip13'
+      password: 'you spin me right around baby'
+      createdb: False
+
+    scruffy:
+      password: 'spacejugs'
       createdb: False
 
   databases:
@@ -33,43 +45,44 @@ postgres:
   acls:
     - ['local', 'stationspinner', 'stationspinner', 'peer']
     - ['host', 'stationspinner', 'stationspinner', '127.0.0.1/32', 'md5']
+    - ['host', 'stationspinner', 'stationspinner', '0.0.0.0/0', 'md5']
+    - ['host', 'stationspinner', 'scruffy', '127.0.0.1/32', 'md5']
     - ['local', 'sde', 'stationspinner', 'peer']
     - ['host', 'sde', 'stationspinner', '127.0.0.1/32', 'md5']
+    - ['host', 'sde', 'stationspinner', '0.0.0.0/0', 'md5']
+    - ['host', 'sde', 'scruffy', '127.0.0.1/32', 'md5']
 
   # This section will append your configuration to postgresql.conf.
   postgresconf: |
-    listen_addresses = 'localhost'
+    listen_addresses = '*'
 
-
+# /srv/pillar/armada/stationspinner.sls
 stationspinner:
-  webserver: nginx
-  rest_api: False
   debug: False
-  secret_key: 'q5=dqk9+34kookgou43563434rfasdgknbvyahrhph33a@7qhz'
+  secret_key: 'asdfasdpifj7as9f67932432j14kjn3o4ih2oi0890'
   databases:
-    {# 
+    {#
     Keeping socket==True will ignore ip:port. Set to false, if you want to have
     database on another server
     #}
     sde:
       user: stationspinner
-      password: asdf79ohip13
+      password: 'you spin me right around baby'
       socket: False
       host: '127.0.0.1'
       port: '5432'
     stationspinner:
       user: stationspinner
-      password: asdf79ohip13
+      password: 'you spin me right around baby'
       socket: False
       host: '127.0.0.1'
       port: '5432'
   admins:
-    - email: your.name@foo.bar
-      username: foo
-      full_name: foo bar
+    - email: admin@localhost
+      username: admin
+      full_name: That Admin Guy
   allowed_hosts:
     - localhost
-    - site.com
   redis:
     host: '127.0.0.1'
     port: '6379'
@@ -82,3 +95,4 @@ stationspinner:
     - rens
     - hek
     - the forge
+

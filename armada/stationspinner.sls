@@ -284,6 +284,15 @@ bootstrap universe:
     - require:
       - cmd: migrate stationspinner
 
+{% if not stationspinner.debug %}
+trigger uwsgi reload:
+  cmd.run:
+    - name: 'touch /srv/www/stationspinner/reload-stationspinner'
+    - user: stationspinner
+    - require:
+      - cmd: uwsgi enabled
+{% endif %}
+
 {% for market in stationspinner.markets %}
 {{ market }} market indexing:
   cmd.run: 
