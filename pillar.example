@@ -1,9 +1,9 @@
 # /srv/pillar/armada/armada.sls
 armada:
-  debug: True
+  debug: False
   static_user: www-data
   static_group: www-data
-  server_name: armada.home
+  server_name: localhost
 
 # /srv/pillar/armada/databases.sls
 postgres:
@@ -90,9 +90,4 @@ stationspinner:
     cachedb: '1'
   markets:
     - jita
-    - amarr
-    - dodixie
-    - rens
-    - hek
-    - the forge
 

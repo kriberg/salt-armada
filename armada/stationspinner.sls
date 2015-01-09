@@ -147,7 +147,7 @@ character_asset:
     - name: 'psql -f stationspinner/character/sql/asset.sql stationspinner'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
-    - onlyif: 'test "$(psql -c "\d character_asset" stationspinner)" = "No relations found."'
+    - onlyif: test "$(psql -t -A -c "select count(*) from information_schema.tables where table_name='corporation_asset'" stationspinner)" = "0"
     - require:
       - cmd: migrate stationspinner
 
@@ -156,7 +156,7 @@ corporation_asset:
     - name: 'psql -f stationspinner/corporation/sql/asset.sql stationspinner'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
-    - onlyif: 'test "$(psql -c "\d corporation_asset" stationspinner)" = "No relations found."'
+    - onlyif: test "$(psql -t -A -c "select count(*) from information_schema.tables where table_name='corporation_asset'" stationspinner)" = "0"
     - require:
       - cmd: migrate stationspinner
 
@@ -280,7 +280,7 @@ bootstrap universe:
     - name: 'source ../env/bin/activate; python manage.py runtask universe.update_universe'
     - user: stationspinner
     - cwd: '/srv/www/stationspinner/web'
-    - onlyif: 'test "$(psql -c "select count(*) from universe_apicall;" stationspinner)" -gt 50'
+    - onlyif: 'test "$(psql -t -A -c "select count(*) from universe_apicall;" stationspinner)" -gt 50'
     - require:
       - cmd: migrate stationspinner
 
@@ -290,7 +290,7 @@ trigger uwsgi reload:
     - name: 'touch /srv/www/stationspinner/reload-stationspinner'
     - user: stationspinner
     - require:
-      - cmd: uwsgi enabled
+      - file: uwsgi enabled
 {% endif %}
 
 {% for market in stationspinner.markets %}
