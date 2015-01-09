@@ -166,16 +166,17 @@ for what's done in the background by salt:
   
 This will install and configure everything. When running for the first time, it
 will give you an error that it can't delete the old postgres-latest.dmp file.
-Just ignore it, there's a small limitation in salt which causes it. Next, we'll
-bootstrap the universe and then create an admin user for you to log in with.
-The bootstrapping takes a couple of minutes, but it will run in the background
-after you've started it.
+Just ignore it, there's a small limitation in salt which causes it. This will
+also start a task called "universe.update_universe" that fetches all api call
+types, sovereignty and such. This task has to finish before we can add API
+keys, but we will get to that later.
+
+Next, we'll create an admin user for you to log in with:
 
     su - stationspinner
     cd /srv/www/stationspinner
     source env/bin/activate
     cd web
-    python manage.py runtask universe.update_universe
     python manage.py createsuperuser 
 
 Use the same parameters as you gave for admins in the configuration. This can
