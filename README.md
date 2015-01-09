@@ -107,9 +107,9 @@ this link for examples of the data:
 https://github.com/kriberg/salt-armada/blob/master/pillar.example
 
 The filenames are commented out at the top. Copy/paste the data into them, but
-make sure you keep the indentation. In armada.sls, change debug to 'False' and
-set your server_name to either your IP address or a resolvable hostname.  It
-will be used as the server_name parameter to nginx.
+make sure you keep the indentation. In armada.sls, set your server_name to
+either your IP address or a resolvable hostname. It will be used as the
+server_name parameter to nginx.
 
 In stationspinner.sls, for allowed_hosts, add the same value as you used for
 server_name:
