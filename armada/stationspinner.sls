@@ -280,7 +280,7 @@ bootstrap universe:
     - name: 'source ../env/bin/activate; python manage.py runtask universe.update_universe'
     - user: stationspinner
     - cwd: '/srv/www/stationspinner/web'
-    - onlyif: 'test "$(psql -t -A -c "select count(*) from universe_apicall;" stationspinner)" -gt 50'
+    - onlyif: 'test "$(psql -t -A -c "select count(*) from universe_apicall;" stationspinner)" -lt 50'
     - require:
       - cmd: migrate stationspinner
 
