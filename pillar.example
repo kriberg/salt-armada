@@ -90,4 +90,7 @@ stationspinner:
     cachedb: '1'
   markets:
     - jita
+  evemail_search_languages:
+    - english
+    - german
 

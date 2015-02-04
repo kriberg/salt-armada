@@ -125,6 +125,37 @@ be using for administration.
 You can change 'markets' too, if you don't need all those indexed and want to
 save cpu and/or diskspace.
 
+The list for 'evemail_search_languages' indicates which languages will be used
+to create the search index. If all the mail is predominately in english, that
+will suffice. If you're in a mixed alliance or run for multiple entities with
+several languages, you can make the mail search better by adding additional
+indexing languages here. To stick with english only, use:
+
+    evemail_search_languages:
+      - english
+
+PostgreSQL currently supports the following languages:
+
+* danish
+* dutch
+* english
+* finnish
+* french
+* german
+* hungarian
+* italian
+* norwegian
+* portuguese
+* romanian
+* russian
+* spanish
+* swedish
+* turkish
+
+To add a some, simply append them to the configuration. The bieffect of adding more
+languages is a slight increase in the time it takes to parse mails, usually around
+10-30 ms, and increased database size.
+
 Now we have configured armada, stationspinner and our databases. Put this into
 /srv/pillar/top.sls:
 

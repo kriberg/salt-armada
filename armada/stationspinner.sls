@@ -132,6 +132,11 @@ ltree extension:
     - name: 'psql -c "create extension if not exists ltree" stationspinner'
     - user: postgres
 
+unaccent extension:
+  cmd.run:
+    - name: 'psql -c "create extension if not exists unaccent" stationspinner'
+    - user: postgres
+
 migrate stationspinner:
   cmd.run:
     - name: 'source ../env/bin/activate && python manage.py migrate'
@@ -291,6 +296,15 @@ trigger uwsgi reload:
     - user: stationspinner
     - require:
       - file: uwsgi enabled
+
+evemail search indexing:
+  cmd.run: 
+    - name: 'source ../env/bin/activate; python manage.py runtask "evemail.update_search_index"'
+    - user: stationspinner
+    - cwd: '/srv/www/stationspinner/web'
+    - require:
+      - cmd: migrate stationspinner
+      - service: celeryd service
 {% endif %}
 
 {% for market in stationspinner.markets %}
@@ -302,3 +316,4 @@ trigger uwsgi reload:
     - require:
       - cmd: migrate stationspinner
 {% endfor %}
+
