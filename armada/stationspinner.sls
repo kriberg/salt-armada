@@ -297,14 +297,6 @@ trigger uwsgi reload:
     - require:
       - file: uwsgi enabled
 
-evemail search indexing:
-  cmd.run: 
-    - name: 'source ../env/bin/activate; python manage.py runtask "evemail.update_search_index"'
-    - user: stationspinner
-    - cwd: '/srv/www/stationspinner/web'
-    - require:
-      - cmd: migrate stationspinner
-      - service: celeryd service
 {% endif %}
 
 {% for market in stationspinner.markets %}
