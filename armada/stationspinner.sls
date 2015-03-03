@@ -78,8 +78,10 @@ stationspinner local settings:
     - context:
       stationspinner: {{ stationspinner|yaml }}
       db: {{ db|yaml }}
+    {% if not stationspinner.debug %}
     - require:
       - git: stationspinner code
+    {% endif %}
 
 {#
 Download and import the SDE from fuzzyesteve
@@ -119,6 +121,13 @@ unpacked dump:
     - require:
       - file: latest postgresql dump
 
+drop sde database:
+  cmd.wait:
+    - name: 'psql -c "drop schema public cascade; create schema public" sde'
+    - user: stationspinner
+    - watch:
+      - file: latest postgresql dump
+
 import sde:
   cmd.run:
     - name: 'pg_restore --role=stationspinner -n public -O -j 4 -d sde /srv/www/stationspinner/sde/postgres-latest.dmp'
@@ -126,6 +135,7 @@ import sde:
     - onlyif: 'test "$(psql -c "\d" sde)" = "No relations found."'
     - require:
       - cmd: unpacked dump
+      - cmd: drop sde database
 
 ltree extension:
   cmd.run:
