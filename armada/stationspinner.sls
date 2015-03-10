@@ -177,7 +177,7 @@ corporation_asset:
 
 evespai grants:
   cmd.run:
-    - name: 'psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO scruffy;" sde; psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO scruffy;" stationspinner'
+    - name: '/srv/www/stationspinner/web/tools/fix_evespai_grants'
     - user: stationspinner
     - require:
       - cmd: import sde
