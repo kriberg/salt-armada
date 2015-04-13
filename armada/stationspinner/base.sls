@@ -1,6 +1,19 @@
 {% set stationspinner = salt["pillar.get"]("stationspinner", {}) %}
 {% set db = salt["pillar.get"]("postgres", {}) %}
 
+postgresql repository:
+  pkgrepo.managed:
+    - humanname: PGDG 9.4
+    {% if grains['os_family'] == 'RedHat' %}
+    - baseurl: http://yum.postgresql.org/9.4/redhat/rhel-$releasever-$basearch
+    - gpgkey: http://yum.postgresql.org/RPM-GPG-KEY-PGDG-94
+    - gpgcheck: 1
+    {% else %}
+    - name: deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main 9.4
+    - keyid: ACCC4CF8
+    - keyserver: keyserver.ubuntu.com
+    {% endif %}
+
 stationspinner user:
   user.present:
     - name: stationspinner
@@ -11,6 +24,7 @@ platform dependencies:
       - git
       - python-virtualenv
       - python-pip
+      - libpq-dev
 
 stationspinner service directory:
   file.directory:
