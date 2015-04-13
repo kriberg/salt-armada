@@ -190,7 +190,7 @@ Installed and configured. Now we just need uwsgi and webserver to setup
 uwsgi config:
   file.managed:
     - name: /etc/uwsgi/apps-available/stationspinner.ini
-    - source: salt://armada/stationspinner.ini
+    - source: salt://armada/stationspinner/files/stationspinner.ini
 
 {#
 This should trigger the uwsgi emperor to start stationspinner

@@ -90,21 +90,21 @@ celery rundir:
 celeryd config:
   file.managed:
     - name: /etc/default/stationspinner-worker
-    - source: salt://armada/stationspinner-worker.conf
+    - source: salt://armada/stationspinner/files/stationspinner-worker.conf
     - require:
       - pkg: celery dist
 
 celerybeat config:
   file.managed:
     - name: /etc/default/stationspinner-beat
-    - source: salt://armada/stationspinner-beat.conf
+    - source: salt://armada/stationspinner/files/stationspinner-beat.conf
     - require:
       - pkg: celery dist
 
 celeryd initscript:
   file.managed:
     - name: /etc/init.d/stationspinner-worker
-    - source: salt://armada/stationspinner-worker.init
+    - source: salt://armada/stationspinner/files/stationspinner-worker.init
     - mode: 755
     - require:
       - file: celeryd config
@@ -112,7 +112,7 @@ celeryd initscript:
 celerybeat initscript:
   file.managed:
     - name: /etc/init.d/stationspinner-beat
-    - source: salt://armada/stationspinner-beat.init
+    - source: salt://armada/stationspinner/files/stationspinner-beat.init
     - mode: 755
     - require:
       - file: celerybeat config
