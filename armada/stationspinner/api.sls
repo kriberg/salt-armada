@@ -27,7 +27,6 @@ platform dependencies:
       - python-virtualenv
       - python-pip
       - postgresql-contrib-9.4
-      - redis-server
 
 stationspinner service directory:
   file.directory:
@@ -202,15 +201,6 @@ uwsgi enabled:
     - target: /etc/uwsgi/apps-available/stationspinner.ini
 {% endif %}
 
-bootstrap universe:
-  cmd.run: 
-    - name: 'source ../env/bin/activate; python manage.py runtask universe.update_universe'
-    - user: stationspinner
-    - cwd: '/srv/www/stationspinner/web'
-    - onlyif: 'test "$(psql -t -A -c "select count(*) from universe_apicall;" stationspinner)" -lt 50'
-    - require:
-      - cmd: migrate stationspinner
-
 {% if not stationspinner.debug %}
 trigger uwsgi reload:
   cmd.run:
@@ -220,14 +210,4 @@ trigger uwsgi reload:
       - file: uwsgi enabled
 
 {% endif %}
-
-{% for market in stationspinner.markets %}
-{{ market }} market indexing:
-  cmd.run: 
-    - name: 'source ../env/bin/activate; python manage.py addmarket "{{ market }}"'
-    - user: stationspinner
-    - cwd: '/srv/www/stationspinner/web'
-    - require:
-      - cmd: migrate stationspinner
-{% endfor %}
 

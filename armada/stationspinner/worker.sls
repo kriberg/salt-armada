@@ -11,6 +11,7 @@ platform dependencies:
       - git
       - python-virtualenv
       - python-pip
+      - redis-server
 
 stationspinner service directory:
   file.directory:
@@ -133,7 +134,6 @@ manual restart celeryd:
   cmd.wait:
     - name: service stationspinner-worker restart
     - watch:
-      - cmd: migrate stationspinner
       - git: stationspinner code
 
 celerybeat service:
@@ -150,7 +150,21 @@ manual restart beat:
   cmd.wait:
     - name: service stationspinner-beat stop; service stationspinner-beat start
     - watch:
-      - cmd: migrate stationspinner
       - git: stationspinner code
 
 {% endif %}
+
+bootstrap universe:
+  cmd.run: 
+    - name: 'source ../env/bin/activate; python manage.py bootstrap'
+    - user: stationspinner
+    - cwd: '/srv/www/stationspinner/web'
+
+{% for market in stationspinner.markets %}
+{{ market }} market indexing:
+  cmd.run: 
+    - name: 'source ../env/bin/activate; python manage.py addmarket "{{ market }}"'
+    - user: stationspinner
+    - cwd: '/srv/www/stationspinner/web'
+{% endfor %}
+
