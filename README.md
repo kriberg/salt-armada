@@ -190,17 +190,34 @@ Installing stationspinner
 =========================
 
 Now as everything is configured, we can install or update both stationspinner
-and armada using salt. We'll turn on debugging, so you can see a complete log
-for what's done in the background by salt:
+and armada using salt. Stationspinner is split into three parts:
 
-    salt-call -l debug state.sls armada.stationspinner
+    * database - The postgresql and redis databases.
+    * api - The REST endpoints that armada will connect to.
+    * worker - The eveapi processing workers.
+
+You only need a single instance of these, but if you are processing a large
+amount of eve API keys, it will help to have multiple workers. Be aware though,
+the workers require access to the Redis instance running on the server
+allocated as database. Albeit there's a password protecting the Redis database,
+there's no strong authentication and authorization built into Redis. Only use
+multiple servers if you have a private network between workers and the
+database. I will presume you are setting up everything on a single host. A
+multi-host setup is out of scope for these instructions and should only be done
+if you really understand the workings of Redis, Postgresql and Django.
+
+
+We'll run all three states in succession and turn on debugging, so you can see
+what salt is doing in the background:
+
+    salt-call -l debug state.sls armada.stationspinner.database
+    salt-call -l debug state.sls armada.stationspinner.worker
+    salt-call -l debug state.sls armada.stationspinner.api
   
-This will install and configure everything. When running for the first time, it
-will give you an error that it can't delete the old postgres-latest.dmp file.
-Just ignore it, there's a small limitation in salt which causes it. This will
-also start a task called "universe.update_universe" that fetches all api call
-types, sovereignty and such. This task has to finish before we can add API
-keys, but we will get to that later.
+This will install and configure everything. The worker state also start a task
+called "universe.update_universe" that fetches all api call types, sovereignty
+and such. This task has to finish before we can add API keys, but we will get
+to that later.
 
 Next, we'll create an admin user for you to log in with:
 
