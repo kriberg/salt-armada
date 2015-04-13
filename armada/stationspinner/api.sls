@@ -1,11 +1,11 @@
-include:
-  - uwsgi
-  - .base
 {% set stationspinner = salt["pillar.get"]("stationspinner", {}) %}
 {% set db = salt["pillar.get"]("postgres", {}) %}
 
+include:
+  - uwsgi
+  - .base
 
-stationspinner user:
+uwsgi_member:
   user.present:
     - name: stationspinner
     - groups:

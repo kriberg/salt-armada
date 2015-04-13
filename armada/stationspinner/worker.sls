@@ -1,3 +1,5 @@
+{% set stationspinner = salt["pillar.get"]("stationspinner", {}) %}
+{% set db = salt["pillar.get"]("postgres", {}) %}
 include:
   - .base
 

@@ -1,10 +1,10 @@
+{% set stationspinner = salt["pillar.get"]("stationspinner", {}) %}
+{% set db = salt["pillar.get"]("postgres", {}) %}
 include:
   - postgres
   - .base
-{% set stationspinner = salt["pillar.get"]("stationspinner", {}) %}
-{% set db = salt["pillar.get"]("postgres", {}) %}
 
-platform dependencies:
+database dependencies:
   pkg.installed:
     - names:
       - redis-server
