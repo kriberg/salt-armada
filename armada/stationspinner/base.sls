@@ -17,6 +17,7 @@ postgresql repository:
 stationspinner user:
   user.present:
     - name: stationspinner
+    - shell: /bin/bash
 
 platform dependencies:
   pkg.installed:
