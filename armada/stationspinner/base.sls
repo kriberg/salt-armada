@@ -54,7 +54,7 @@ stationspinner venv:
     - name: virtualenv /srv/www/stationspinner/env
     - onlyif: 'test ! -f /srv/www/stationspinner/env/bin/activate'
     - user: stationspinner
-    - shell: bash
+    - shell: /bin/bash
     - require:
       - pkg: platform dependencies
       - user: stationspinner user
@@ -65,7 +65,7 @@ stationspinner reqs:
     - name: 'source ../env/bin/activate && pip install -r requirements.txt'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
-    - shell: bash
+    - shell: /bin/bash
     - require:
       - cmd: stationspinner venv
 
