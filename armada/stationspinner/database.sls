@@ -45,6 +45,7 @@ unpacked dump:
     - onlyif: 'test ! -f postgres-latest.dmp'
     - user: stationspinner
     - group: stationspinner
+    - shell: bash
     - require:
       - file: latest postgresql dump
 
@@ -59,6 +60,7 @@ import sde:
   cmd.run:
     - name: 'pg_restore --role=stationspinner -n public -O -j 4 -d sde /srv/www/stationspinner/sde/postgres-latest.dmp'
     - user: postgres
+    - shell: bash
     - onlyif: 'test "$(psql -c "\d" sde)" = "No relations found."'
     - require:
       - cmd: unpacked dump
@@ -68,17 +70,20 @@ ltree extension:
   cmd.run:
     - name: 'psql -c "create extension if not exists ltree" stationspinner'
     - user: postgres
+    - shell: bash
 
 unaccent extension:
   cmd.run:
     - name: 'psql -c "create extension if not exists unaccent" stationspinner'
     - user: postgres
+    - shell: bash
 
 migrate stationspinner:
   cmd.run:
     - name: 'source ../env/bin/activate && python manage.py migrate'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
+    - shell: bash
     - require:
       - cmd: import sde
       - cmd: stationspinner venv
@@ -89,6 +94,7 @@ character_asset:
     - name: 'psql -f stationspinner/character/sql/asset.sql stationspinner'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
+    - shell: bash
     - onlyif: test "$(psql -t -A -c "select count(*) from information_schema.tables where table_name='corporation_asset'" stationspinner)" = "0"
     - require:
       - cmd: migrate stationspinner
@@ -98,6 +104,7 @@ corporation_asset:
     - name: 'psql -f stationspinner/corporation/sql/asset.sql stationspinner'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
+    - shell: bash
     - onlyif: test "$(psql -t -A -c "select count(*) from information_schema.tables where table_name='corporation_asset'" stationspinner)" = "0"
     - require:
       - cmd: migrate stationspinner
@@ -106,6 +113,7 @@ evespai grants:
   cmd.run:
     - name: '/srv/www/stationspinner/web/tools/fix_evespai_grants'
     - user: stationspinner
+    - shell: bash
     - require:
       - cmd: import sde
       - cmd: migrate stationspinner

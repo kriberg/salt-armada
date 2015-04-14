@@ -18,6 +18,7 @@ stationspinner user:
   user.present:
     - name: stationspinner
     - shell: /bin/bash
+    - system: True
 
 platform dependencies:
   pkg.installed:
@@ -53,6 +54,7 @@ stationspinner venv:
     - name: virtualenv /srv/www/stationspinner/env
     - onlyif: 'test ! -f /srv/www/stationspinner/env/bin/activate'
     - user: stationspinner
+    - shell: bash
     - require:
       - pkg: platform dependencies
       - user: stationspinner user
@@ -63,6 +65,7 @@ stationspinner reqs:
     - name: 'source ../env/bin/activate && pip install -r requirements.txt'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
+    - shell: bash
     - require:
       - cmd: stationspinner venv
 

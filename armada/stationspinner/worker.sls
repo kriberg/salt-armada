@@ -94,6 +94,7 @@ bootstrap universe:
   cmd.run: 
     - name: 'source ../env/bin/activate; python manage.py bootstrap'
     - user: stationspinner
+    - shell: bash
     - cwd: '/srv/www/stationspinner/web'
 
 {% for market in stationspinner.markets %}
@@ -101,6 +102,7 @@ bootstrap universe:
   cmd.run: 
     - name: 'source ../env/bin/activate; python manage.py addmarket "{{ market }}"'
     - user: stationspinner
+    - shell: bash
     - cwd: '/srv/www/stationspinner/web'
 {% endfor %}
 

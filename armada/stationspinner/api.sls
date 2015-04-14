@@ -32,6 +32,7 @@ trigger uwsgi reload:
   cmd.run:
     - name: 'touch /srv/www/stationspinner/reload-stationspinner'
     - user: stationspinner
+    - shell: bash
     - require:
       - file: uwsgi enabled
 
