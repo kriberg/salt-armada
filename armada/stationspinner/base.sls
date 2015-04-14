@@ -25,6 +25,7 @@ platform dependencies:
       - python-virtualenv
       - python-pip
       - libpq-dev
+      - python-dev
 
 stationspinner service directory:
   file.directory:
