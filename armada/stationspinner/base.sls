@@ -69,6 +69,17 @@ stationspinner reqs:
     - require:
       - cmd: stationspinner venv
 
+{% if stationspinner.debug %}
+stationspinner development reqs:
+  cmd.run:
+    - name: 'source ../env/bin/activate && pip install -r development_reqs.txt'
+    - cwd: '/srv/www/stationspinner/web'
+    - user: stationspinner
+    - shell: /bin/bash
+    - require:
+      - cmd: stationspinner venv
+{% endif %}
+
 stationspinner local settings:
   file.managed:
     - name: /srv/www/stationspinner/web/stationspinner/local_settings.py
