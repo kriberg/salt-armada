@@ -11,6 +11,10 @@ server {
 		alias /srv/www/armada/app;
 	}
 
+    location /static {
+        alias /srv/www/stationspinner/web/static;
+    }
+
     location / {
         include     uwsgi_params;
         uwsgi_pass  stationspinner;

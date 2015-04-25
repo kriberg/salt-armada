@@ -36,5 +36,12 @@ trigger uwsgi reload:
     - require:
       - file: uwsgi enabled
 
+collect static files:
+  cmd.run: 
+    - name: 'source ../env/bin/activate; echo yes | python manage.py collectstatic'
+    - user: stationspinner
+    - shell: /bin/bash
+    - cwd: '/srv/www/stationspinner/web'
+
 {% endif %}
 
