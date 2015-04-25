@@ -93,4 +93,5 @@ stationspinner:
   evemail_search_languages:
     - english
     - german
+  static_root: '/srv/www/stationspinner/web/static'
 
