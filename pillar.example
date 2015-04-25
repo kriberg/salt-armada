@@ -94,4 +94,4 @@ stationspinner:
     - english
     - german
   static_root: '/srv/www/stationspinner/web/static'
-
+  static_group: www-data

@@ -43,5 +43,12 @@ collect static files:
     - shell: /bin/bash
     - cwd: '/srv/www/stationspinner/web'
 
+fix static files ownership:
+  file.directory:
+    - name: '{{ stationspinner.static_root }}'
+    - group: '{{ stationspinner.static_group }}'
+    - recurse:
+      - group
+
 {% endif %}
 
