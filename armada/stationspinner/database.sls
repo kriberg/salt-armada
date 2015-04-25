@@ -51,10 +51,18 @@ unpacked dump:
 
 drop sde database:
   cmd.wait:
-    - name: 'psql -c "drop schema public cascade; create schema public" sde'
+    - name: 'psql -c "drop schema public cascade" sde'
+    - user: postgres
+    - watch:
+      - file: latest postgresql dump
+
+create sde database:
+  cmd.wait:
+    - name: 'psql -c "create schema public" sde'
     - user: stationspinner
     - watch:
       - file: latest postgresql dump
+      - cmd: drop sde database
 
 import sde:
   cmd.run:
