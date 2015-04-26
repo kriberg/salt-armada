@@ -4,7 +4,8 @@ projectpath=%(homedir)/web
 
 vhost=true
 chdir=%(projectpath)
-module=stationspinner.wsgi:application
+mount=/api=stationspinner/wsgi.py
+callable=application
 master=true
 pidfile=%(homedir)/run/stationspinner-master.pid
 vacuum=true
@@ -14,14 +15,15 @@ processes=1
 threads=4
 uid=stationspinner
 gid=stationspinner
-harakiri=20
+harakiri=60
 virtualenv=%(homedir)/env
 pythonpath=%(projectpath)
 stats=127.0.0.1:9000
 uwsgi-socket=/srv/www/stationspinner/run/stationspinner.sock
 chmod-socket=660
-chown-socket=stationspinner:www-data
+chown-socket=stationspinner:{{ stationspinner.static_group }}
 touch-reload=%(homedir)/reload-stationspinner
 protocol=uwsgi
 enable-threads=true
 logto=%(homedir)/log/uwsgi.log
+manage-script-name=true

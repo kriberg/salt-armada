@@ -2,20 +2,34 @@ upstream stationspinner {
     server unix:/srv/www/stationspinner/run/stationspinner.sock;
 }
 
+{% if armada.ssl %}
 server {
-        server_name {{ armada.server_name }};
-        access_log /var/log/nginx/{{ armada.server_name }}_access.log;
-        error_log /var/log/nginx/{{ armada.server_name }}_error.log;
+    listen         80;
+    server_name    {{ armada.server_name }};
+    return         301 https://$server_name$request_uri;
+}
+{% endif %}
 
-	location /armada {
-		alias /srv/www/armada/app;
-	}
+server {
+
+    {% if armada.ssl %}
+    listen 443;
+    ssl on;
+    ssl_certificate  {{ armada.ssl_certificate }};
+    ssl_certificate_key {{ armada.ssl_certificate_key }};
+    {% endif %}
+
+    server_name {{ armada.server_name }};
+    access_log /var/log/nginx/{{ armada.server_name }}_access.log;
+    error_log /var/log/nginx/{{ armada.server_name }}_error.log;
+
+	root /srv/www/armada/app;
 
     location /static {
         alias /srv/www/stationspinner/web/static;
     }
 
-    location / {
+    location /api {
         include     uwsgi_params;
         uwsgi_pass  stationspinner;
     }

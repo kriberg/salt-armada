@@ -16,7 +16,10 @@ uwsgi_member:
 uwsgi config:
   file.managed:
     - name: /etc/uwsgi/apps-available/stationspinner.ini
-    - source: salt://armada/stationspinner/files/stationspinner.ini
+    - source: salt://armada/stationspinner/files/stationspinner.ini.jinja
+    - template: jinja
+    - context:
+      stationspinner: {{ stationspinner|yaml }}
 
 # This should trigger the uwsgi emperor to start stationspinner
 

@@ -4,6 +4,9 @@ armada:
   static_user: www-data
   static_group: www-data
   server_name: localhost
+  ssl: False
+  ssl_certificate: '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+  ssl_certificate_key: '/etc/ssl/private/ssl-cert-snakeoil.key'
 
 # /srv/pillar/armada/databases.sls
 postgres:
