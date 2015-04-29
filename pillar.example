@@ -7,6 +7,7 @@ armada:
   ssl: False
   ssl_certificate: '/etc/ssl/certs/ssl-cert-snakeoil.pem'
   ssl_certificate_key: '/etc/ssl/private/ssl-cert-snakeoil.key'
+  ssl_trusted_certificate: '/etc/ssl/certs/CA.pem'
 
 # /srv/pillar/armada/databases.sls
 postgres:

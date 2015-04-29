@@ -7,6 +7,7 @@ platform dependencies:
       - nodejs
       - nodejs-legacy
       - npm
+      - openssl
 
 armada service directory:
   file.directory:
@@ -36,6 +37,11 @@ armada code:
     - require:
       - pkg: platform dependencies
       - file: armada service directory
+
+generate dhparam:
+  cmd.run:
+    - name: 'openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048'
+    - onlyif: 'test ! -f /etc/ssl/certs/dhparam.pem'
 
 armada site config:
   file.managed:
