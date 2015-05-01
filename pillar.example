@@ -104,7 +104,7 @@ stationspinner:
       update_all_markets: 'timedelta(hours=24)'
     universe:
       update_universe: 'timedelta(hours=24)'
-    accouting:
+    accounting:
       update_capsuler_keys: 'timedelta(hours=24)'
       update_all_sheets: 'timedelta(hours=24)'
       update_all_apidata: 'timedelta(minutes=30)'
