@@ -90,8 +90,14 @@ stationspinner:
   redis:
     host: '127.0.0.1'
     port: '6379'
-    celerydb: '0'
+    resultdb: '0'
     cachedb: '1'
+  rabbitmq:
+    host: 'localhost'
+    port: 5672
+    user: 'armada'
+    password: '887AgxsL'
+    vhost: 'armada'
   markets:
     - jita
   evemail_search_languages:

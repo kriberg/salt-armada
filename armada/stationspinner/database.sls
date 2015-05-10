@@ -8,7 +8,48 @@ database dependencies:
   pkg.installed:
     - names:
       - redis-server
+      - rabbitmq-server
       - postgresql-contrib-9.4
+
+
+# RabbitMQ setup
+
+rabbit monitoring:
+  rabbitmq_plugin.enabled:
+    - name: rabbitmq_management
+
+rabbitmq restart:
+  cmd.wait:
+    - name: 'service rabbitmq-server restart'
+    - watch:
+      - rabbitmq_plugin: rabbit monitoring
+
+rabbit armada user:
+  rabbitmq_user.present:
+    - name : {{ stationspinner.rabbitmq.user }}
+    - password: {{ stationspinner.rabbitmq.password }}
+    - force: True
+    - tags:
+      - monitoring
+      - user
+    - perms:
+      - '/':
+        - '.*'
+        - '.*'
+        - '.*'
+    - require:
+      - rabbitmq_plugin: rabbit monitoring
+      - cmd: rabbitmq restart
+
+rabbit armada vhost:
+  rabbitmq_vhost.present:
+    - name: {{ stationspinner.rabbitmq.vhost }}
+    - user: {{ stationspinner.rabbitmq.user }}
+    - conf: .*
+    - write: .*
+    - read: .*
+    - require:
+      - rabbitmq_user: rabbit armada user
 
 {#
 Download and import the SDE from fuzzyesteve
