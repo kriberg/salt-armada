@@ -100,7 +100,7 @@ postgres-user-{{ name }}:
     - name: {{ name }}
     - createdb: {{ salt['pillar.get']('postgres:users:' + name + ':createdb', False) }}
     - password: {{ salt['pillar.get']('postgres:users:' + name + ':password', 'changethis') }}
-    - runas: postgres
+    - user: postgres
     - require:
       - service: run-postgresql
 {% endfor%}
@@ -118,7 +118,7 @@ postgres-db-{{ name }}:
     {% if salt['pillar.get']('postgres:databases:'+ name +':owner') %}
     - owner: {{ salt['pillar.get']('postgres:databases:'+ name +':owner') }}
     {% endif %}
-    - runas: {{ salt['pillar.get']('postgres:databases:'+ name +':runas', 'postgres') }}
+    - user: {{ salt['pillar.get']('postgres:databases:'+ name +':user', 'postgres') }}
     {% if salt['pillar.get']('postgres:databases:'+ name +':user') %}
     - require:
         - postgres_user: postgres-user-{{ salt['pillar.get']('postgres:databases:'+ name +':user') }}

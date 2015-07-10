@@ -44,10 +44,6 @@ rabbit armada user:
 rabbit armada vhost:
   rabbitmq_vhost.present:
     - name: {{ stationspinner.rabbitmq.vhost }}
-    - user: {{ stationspinner.rabbitmq.user }}
-    - conf: .*
-    - write: .*
-    - read: .*
     - require:
       - rabbitmq_user: rabbit armada user
 
@@ -137,27 +133,6 @@ migrate stationspinner:
       - cmd: import sde
       - cmd: stationspinner venv
       - cmd: ltree extension
-
-character_asset:
-  cmd.run:
-    - name: 'psql -f stationspinner/character/sql/asset.sql stationspinner'
-    - cwd: '/srv/www/stationspinner/web'
-    - user: stationspinner
-    - shell: /bin/bash
-    - onlyif: test "$(psql -t -A -c "select count(*) from information_schema.tables where table_name='corporation_asset'" stationspinner)" = "0"
-    - require:
-      - cmd: migrate stationspinner
-
-corporation_asset:
-  cmd.run:
-    - name: 'psql -f stationspinner/corporation/sql/asset.sql stationspinner'
-    - cwd: '/srv/www/stationspinner/web'
-    - user: stationspinner
-    - shell: /bin/bash
-    - onlyif: test "$(psql -t -A -c "select count(*) from information_schema.tables where table_name='corporation_asset'" stationspinner)" = "0"
-    - require:
-      - cmd: migrate stationspinner
-
 evespai grants:
   cmd.run:
     - name: '/srv/www/stationspinner/web/tools/fix_evespai_grants'
