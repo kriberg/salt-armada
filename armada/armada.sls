@@ -21,6 +21,7 @@ javascript tools:
     - pkgs:
       - grunt-cli
       - bower
+      - webpack
     - require:
       - pkg: platform dependencies
 
@@ -63,14 +64,16 @@ enabled site:
 npm bootstrap:
   npm.bootstrap:
     - name: /srv/www/armada
+    - user: {{ armada.static_user }}
     - require:
       - npm: javascript tools
       - file: armada service directory
 
-bower bootstrap:
+webpack compile:
   cmd.run:
-    - name: bower install --allow-root
+    - name: webpack -p
     - cwd: /srv/www/armada
+    - user: {{ armada.static_user }}
     - require:
       - npm: npm bootstrap
 
