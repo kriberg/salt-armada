@@ -39,6 +39,15 @@ armada code:
       - pkg: platform dependencies
       - file: armada service directory
 
+proper rights:
+  file.directory:
+    - name: /srv/www/armada
+    - user: {{ armada.static_user }}
+    - group: {{ armada.static_group }}
+    - recurse:
+      - user
+      - group
+
 generate dhparam:
   cmd.run:
     - name: 'openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048'
@@ -67,7 +76,9 @@ npm bootstrap:
     - user: {{ armada.static_user }}
     - require:
       - npm: javascript tools
+      - file: proper rights
       - file: armada service directory
+
 
 webpack compile:
   cmd.run:
@@ -76,16 +87,7 @@ webpack compile:
     - user: {{ armada.static_user }}
     - require:
       - npm: npm bootstrap
-
-proper rights:
-  file.directory:
-    - name: /srv/www/armada
-    - user: {{ armada.static_user }}
-    - group: {{ armada.static_group }}
-    - recurse:
-      - user
-      - group
-
+      - file: proper rights
 {% else %}
 
 armada site config:
