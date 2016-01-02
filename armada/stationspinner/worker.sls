@@ -17,6 +17,13 @@ celery logdir:
     - group: celery
     - mode: 775
 
+logrotation:
+  file.managed:
+    - name: /etc/logrotate.d/stationspinner
+    - source: salt://armada/stationspinner/files/stationspinner.logrotate
+    - require:
+      - file: celery logdir
+
 celery rundir:
   file.directory:
     - name: /srv/www/stationspinner/run
@@ -27,7 +34,10 @@ celery rundir:
 celeryd config:
   file.managed:
     - name: /etc/default/stationspinner-worker
-    - source: salt://armada/stationspinner/files/stationspinner-worker.conf
+    - source: salt://armada/stationspinner/files/stationspinner-worker.conf.jinja
+    - template: jinja
+    - context:
+      stationspinner: {{ stationspinner|yaml }}
     - require:
       - pkg: celery dist
 
