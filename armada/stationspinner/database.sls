@@ -125,7 +125,7 @@ unaccent extension:
 
 migrate stationspinner:
   cmd.run:
-    - name: 'source ../env/bin/activate && python manage.py migrate'
+    - name: 'source ../env/bin/activate && echo "yes" | python manage.py migrate'
     - cwd: '/srv/www/stationspinner/web'
     - user: stationspinner
     - shell: /bin/bash
