@@ -28,6 +28,7 @@ platform dependencies:
       - python-pip
       - libpq-dev
       - python-dev
+      - libffi-dev
 
 stationspinner service directory:
   file.directory:
