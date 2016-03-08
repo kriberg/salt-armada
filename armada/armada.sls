@@ -80,9 +80,9 @@ npm bootstrap:
       - file: armada service directory
 
 
-webpack compile:
+build bundle:
   cmd.run:
-    - name: webpack -p
+    - name: gulp
     - cwd: /srv/www/armada
     - user: {{ armada.static_user }}
     - require:

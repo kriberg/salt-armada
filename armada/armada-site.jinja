@@ -43,7 +43,7 @@ server {
     access_log /var/log/nginx/{{ armada.server_name }}_access.log;
     error_log /var/log/nginx/{{ armada.server_name }}_error.log;
 
-	root /srv/www/armada/app;
+	root /srv/www/armada/build;
 
     location /static {
         alias /srv/www/stationspinner/web/static;
