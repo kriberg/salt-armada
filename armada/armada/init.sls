@@ -19,9 +19,9 @@ armada service directory:
 javascript tools:
   npm.installed:
     - pkgs:
-      - grunt-cli
       - bower
       - webpack
+      - gulp
     - require:
       - pkg: armada platform dependencies
 
