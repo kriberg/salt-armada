@@ -1,5 +1,5 @@
 {% set armada = salt["pillar.get"]("armada", {}) %}
-platform dependencies:
+armada platform dependencies:
   pkg.installed:
     - names: 
       - git
@@ -23,7 +23,7 @@ javascript tools:
       - bower
       - webpack
     - require:
-      - pkg: platform dependencies
+      - pkg: armada platform dependencies
 
 #
 # Code checkout and nginx config
@@ -36,7 +36,7 @@ armada code:
     - target: /srv/www/armada/
     - user: {{ armada.static_user }}
     - require:
-      - pkg: platform dependencies
+      - pkg: armada platform dependencies
       - file: armada service directory
 
 proper rights:
@@ -56,12 +56,12 @@ generate dhparam:
 armada site config:
   file.managed:
     - name: /etc/nginx/sites-available/armada-site
-    - source: salt://armada/armada-site.jinja
+    - source: salt://armada/armada/armada-site.jinja
     - template: jinja
     - context:
       armada: {{ armada|yaml }}
     - require:
-      - pkg: platform dependencies
+      - pkg: armada platform dependencies
 
 enabled site:
   file.symlink:
@@ -93,12 +93,12 @@ build bundle:
 armada site config:
   file.managed:
     - name: /etc/nginx/sites-available/armada-debug
-    - source: salt://armada/armada-debug.jinja
+    - source: salt://armada/armada/armada-debug.jinja
     - template: jinja
     - context:
       armada: {{ armada|yaml }}
     - require:
-      - pkg: platform dependencies
+      - pkg: armada platform dependencies
 
 enabled site:
   file.symlink:
@@ -118,7 +118,7 @@ nginx service:
     - enable: True
     - running: True
     - require:
-      - pkg: platform dependencies
+      - pkg: armada platform dependencies
       - file: armada site config
       - file: enabled site
       {% if not armada.debug %}

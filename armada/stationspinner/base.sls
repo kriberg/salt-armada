@@ -20,7 +20,7 @@ stationspinner user:
     - shell: /bin/bash
     - system: True
 
-platform dependencies:
+stationspinner platform dependencies:
   pkg.installed:
     - names:
       - git
@@ -45,7 +45,7 @@ stationspinner code:
     - user: stationspinner
     - submodules: True
     - require:
-      - pkg: platform dependencies
+      - pkg: stationspinner platform dependencies
       - user: stationspinner user
       - file: stationspinner service directory
 {% endif %}
@@ -57,7 +57,7 @@ stationspinner venv:
     - user: stationspinner
     - shell: /bin/bash
     - require:
-      - pkg: platform dependencies
+      - pkg: stationspinner platform dependencies
       - user: stationspinner user
       - file: stationspinner service directory
 
