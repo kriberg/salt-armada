@@ -7,7 +7,7 @@ CELERYD_NODES="{%- for worker_name in stationspinner.workers.processes %}{{worke
 CELERYD_CHDIR="/srv/www/stationspinner/web"
 PATH="$VIRTUALENV/bin:$PATH"
 CELERY_BIN="$VIRTUALENV/bin/celery"
-CELERYD_OPTS="--time-limit=7200 --concurrency={{stationspinner.workers.concurrency}}"
+CELERYD_OPTS="--time-limit=7200 --concurrency={{stationspinner.workers.concurrency}} -P eventlet"
 CELERYD_LOG_FILE="/srv/www/stationspinner/log/celery-%n.log"
 CELERYD_PID_FILE="/srv/www/stationspinner/run/celery-%n.pid"
 CELERYD_USER="stationspinner"
