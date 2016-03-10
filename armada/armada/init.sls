@@ -20,7 +20,7 @@ javascript tools:
   npm.installed:
     - pkgs:
       - bower
-      - webpack
+      - webpack@1.12.14
       - gulp
     - require:
       - pkg: armada platform dependencies
