@@ -50,16 +50,16 @@ celerybeat config:
 
 celeryd initscript:
   file.managed:
-    - name: /lib/systemd/system/stationspinner-worker.service
-    - source: salt://armada/stationspinner/files/stationspinner-worker.service
+    - name: /etc/init.d/stationspinner-worker
+    - source: salt://armada/stationspinner/files/stationspinner-worker.init
     - mode: 755
     - require:
       - file: celeryd config
 
 celerybeat initscript:
   file.managed:
-    - name: /lib/systemd/system/stationspinner-beat.service
-    - source: salt://armada/stationspinner/files/stationspinner-beat.service
+    - name: /etc/init.d/stationspinner-beat
+    - source: salt://armada/stationspinner/files/stationspinner-beat.init
     - mode: 755
     - require:
       - file: celerybeat config
