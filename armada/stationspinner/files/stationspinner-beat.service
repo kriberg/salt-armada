@@ -1,0 +1,21 @@
+[Unit]
+Description=Stationspinner celery beat scheduler
+After=network.target redis.target
+
+[Service]
+Type=simple
+User=stationspinner
+Group=stationspinner
+EnvironmentFile=-/etc/default/stationspinnet-beat
+WorkingDirectory=/srv/www/stationspinner/web
+# run ExecStartPre as priviledged user and set up /var/run
+ExecStart=${CELERY_BIN} beat -A ${CELERY_APP} \
+    --workdir=${CELERYBEAT_CHDIR} \
+    --pidfile=${CELERYBEAT_PID_FILE} \
+    --logfile=${CELERYBEAT_LOG_FILE} \
+    --loglevel=${CELERYBEAT_LOG_LEVEL} \
+    --schedule=${CELERYBEAT_SCHEDULE}
+ExecStop=/bin/systemctl kill celerybeat.service
+
+[Install]
+WantedBy=multi-user.target

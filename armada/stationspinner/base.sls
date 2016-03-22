@@ -3,16 +3,10 @@
 
 postgresql repository:
   pkgrepo.managed:
-    - humanname: PGDG 9.4
-    {% if grains['os_family'] == 'RedHat' %}
-    - baseurl: http://yum.postgresql.org/9.4/redhat/rhel-$releasever-$basearch
-    - gpgkey: http://yum.postgresql.org/RPM-GPG-KEY-PGDG-94
-    - gpgcheck: 1
-    {% else %}
-    - name: deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main 9.4
+    - humanname: PGDG 9.5
+    - name: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
     - keyid: ACCC4CF8
     - keyserver: keyserver.ubuntu.com
-    {% endif %}
 
 stationspinner user:
   user.present:

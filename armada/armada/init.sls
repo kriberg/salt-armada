@@ -1,13 +1,20 @@
 {% set armada = salt["pillar.get"]("armada", {}) %}
+node 5:
+  cmd.run:
+    name: 'curl -sL https://deb.nodesource.com/setup_5.x | bash -'
+    onlyif: 'test ! -f /etc/apt/sources.list.d/nodesource.list'
+
 armada platform dependencies:
   pkg.installed:
     - names: 
       - git
       - nginx
       - nodejs
-      - nodejs-legacy
       - npm
+      - build-essential
       - openssl
+    - require:
+      - cmd: node 5
 
 armada service directory:
   file.directory:

@@ -9,7 +9,7 @@ database dependencies:
     - names:
       - redis-server
       - rabbitmq-server
-      - postgresql-contrib-9.4
+      - postgresql-contrib-9.5
 
 
 # RabbitMQ setup

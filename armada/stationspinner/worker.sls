@@ -33,7 +33,7 @@ celery rundir:
 
 celeryd config:
   file.managed:
-    - name: /etc/default/stationspinner-worker
+    - name: /etc/conf.d/stationspinner-worker
     - source: salt://armada/stationspinner/files/stationspinner-worker.conf.jinja
     - template: jinja
     - context:
@@ -43,23 +43,23 @@ celeryd config:
 
 celerybeat config:
   file.managed:
-    - name: /etc/default/stationspinner-beat
+    - name: /etc/conf.d/stationspinner-beat
     - source: salt://armada/stationspinner/files/stationspinner-beat.conf
     - require:
       - pkg: celery dist
 
 celeryd initscript:
   file.managed:
-    - name: /etc/init.d/stationspinner-worker
-    - source: salt://armada/stationspinner/files/stationspinner-worker.init
+    - name: /lib/systemd/system/stationspinner-worker.service
+    - source: salt://armada/stationspinner/files/stationspinner-worker.service
     - mode: 755
     - require:
       - file: celeryd config
 
 celerybeat initscript:
   file.managed:
-    - name: /etc/init.d/stationspinner-beat
-    - source: salt://armada/stationspinner/files/stationspinner-beat.init
+    - name: /lib/systemd/system/stationspinner-beat.service
+    - source: salt://armada/stationspinner/files/stationspinner-beat.service
     - mode: 755
     - require:
       - file: celerybeat config
@@ -78,7 +78,7 @@ celeryd service:
 
 manual restart celeryd:
   cmd.wait:
-    - name: service stationspinner-worker restart
+    - name: systemctl restart stationspinner-worker
     - watch:
       - git: stationspinner code
 
@@ -94,7 +94,7 @@ celerybeat service:
 
 manual restart beat:
   cmd.wait:
-    - name: service stationspinner-beat stop; service stationspinner-beat start
+    - name: systemctl restart stationspinner-beat; systemctl restart stationspinner-beat
     - watch:
       - git: stationspinner code
 
