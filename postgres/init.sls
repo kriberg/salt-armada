@@ -1,25 +1,25 @@
 {% from "postgres/map.jinja" import postgres with context %}
 
-PGDG-9.4:
+PGDG-{{ postgres.version }}:
   pkgrepo.managed:
-    - humanname: PGDG 9.4
+    - humanname: PGDG {{ postgres.version }}
     {% if grains['os_family'] == 'RedHat' %}
-    - baseurl: http://yum.postgresql.org/9.4/redhat/rhel-$releasever-$basearch
-    - gpgkey: http://yum.postgresql.org/RPM-GPG-KEY-PGDG-94
+    - baseurl: http://yum.postgresql.org/{{ postgres.version }}/redhat/rhel-$releasever-$basearch
+    - gpgkey: http://yum.postgresql.org/RPM-GPG-KEY-PGDG-95
     - gpgcheck: 1
     {% else %}
-    - name: deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main 9.4
+    - name: deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main {{ postgres.version }}
     - keyid: ACCC4CF8
     - keyserver: keyserver.ubuntu.com
     {% endif %}
 
 
 {% if grains['os_family'] == 'RedHat' %}
-PGDG-9.4 exec profile:
+PGDG-{{ postgres.version }} exec profile:
   file.managed:
-    - name: /etc/profile.d/pgdg-9.4.sh
+    - name: /etc/profile.d/pgdg-{{ postgres.version }}.sh
     - mode: 644
-    - contents: export PATH="/usr/pgsql-9.4/bin:$PATH"
+    - contents: export PATH="/usr/pgsql-{{ postgres.version }}/bin:$PATH"
 {% endif %}
 
 

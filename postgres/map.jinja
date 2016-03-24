@@ -1,26 +1,26 @@
 {% set postgres = salt['grains.filter_by']({
     'Debian': {
-        'pkg': 'postgresql-9.4',
-        'pkg_dev': 'postgresql-server-dev-9.4',
+        'pkg': 'postgresql-9.5',
+        'pkg_dev': 'postgresql-server-dev-9.5',
         'pkg_libpq_dev': 'libpq-dev',
         'python': 'python-pygresql',
         'service': 'postgresql',
-        'pg_hba': '/etc/postgresql/9.4/main/pg_hba.conf',
-        'conf_dir': '/etc/postgresql/9.4/main',
+        'pg_hba': '/etc/postgresql/9.5/main/pg_hba.conf',
+        'conf_dir': '/etc/postgresql/9.5/main',
         'create_cluster': False,
         'init_db': False,
-        'version': '9.4',
+        'version': '9.5',
     },
     'RedHat': {
-        'pkg': 'postgresql94-server',
-        'pkg_dev': 'postgresql94-devel',
-        'pkg_libpq_dev': 'postgresql94-libs',
+        'pkg': 'postgresql95-server',
+        'pkg_dev': 'postgresql95-devel',
+        'pkg_libpq_dev': 'postgresql95-libs',
         'python': 'python-psycopg2',
-        'service': 'postgresql-9.4',
-        'conf_dir': '/var/lib/pgsql/9.4/data',
+        'service': 'postgresql-9.5',
+        'conf_dir': '/var/lib/pgsql/9.5/data',
         'create_cluster': False,
         'init_db': True,
-        'version': '9.4',
+        'version': '9.5',
     }
 }) %}
 
