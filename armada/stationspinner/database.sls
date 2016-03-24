@@ -20,7 +20,7 @@ rabbit monitoring:
 
 rabbitmq restart:
   cmd.wait:
-    - name: 'service rabbitmq-server restart'
+    - name: 'systemctl restart rabbitmq-server'
     - watch:
       - rabbitmq_plugin: rabbit monitoring
 
@@ -37,6 +37,7 @@ rabbit armada user:
         - '.*'
         - '.*'
         - '.*'
+    - runas: rabbitmq
     - require:
       - rabbitmq_plugin: rabbit monitoring
       - cmd: rabbitmq restart
