@@ -78,7 +78,7 @@ celeryd service:
 
 manual restart celeryd:
   cmd.wait:
-    - name: systemctl restart stationspinner-worker
+    - name: service stationspinner-worker restart
     - watch:
       - git: stationspinner code
 
@@ -94,7 +94,7 @@ celerybeat service:
 
 manual restart beat:
   cmd.wait:
-    - name: systemctl restart stationspinner-beat; systemctl restart stationspinner-beat
+    - name: service stationspinner-beat restart; service stationspinner-beat restart
     - watch:
       - git: stationspinner code
 
