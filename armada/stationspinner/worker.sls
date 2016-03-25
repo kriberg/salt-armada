@@ -33,7 +33,7 @@ celery rundir:
 
 celeryd config:
   file.managed:
-    - name: /etc/conf.d/stationspinner-worker
+    - name: /etc/default/stationspinner-worker
     - source: salt://armada/stationspinner/files/stationspinner-worker.conf.jinja
     - template: jinja
     - context:
@@ -43,7 +43,7 @@ celeryd config:
 
 celerybeat config:
   file.managed:
-    - name: /etc/conf.d/stationspinner-beat
+    - name: /etc/default/stationspinner-beat
     - source: salt://armada/stationspinner/files/stationspinner-beat.conf
     - require:
       - pkg: celery dist
