@@ -4,17 +4,12 @@ include:
   - .base
 
 # Celery configuration
-
-celery dist:
-  pkg.installed:
-    - name: celeryd
-
-celery logdir:
+celery_logdir:
   file.directory:
     - name: /srv/www/stationspinner/log
     - makedirs: True
     - user: stationspinner
-    - group: celery
+    - group: stationspinner
     - mode: 775
 
 logrotation:
@@ -22,90 +17,89 @@ logrotation:
     - name: /etc/logrotate.d/stationspinner
     - source: salt://armada/stationspinner/files/stationspinner.logrotate
     - require:
-      - file: celery logdir
+      - file: celery_logdir
 
-celery rundir:
+celery_rundir:
   file.directory:
     - name: /srv/www/stationspinner/run
     - user: stationspinner
-    - group: celery
-    - mode: 775
+    - group: stationspinner
+    - mode: 777
 
-celeryd config:
+celery_worker_config:
   file.managed:
-    - name: /etc/default/stationspinner-worker
+    - name: /etc/sysconfig/stationspinner-worker
     - source: salt://armada/stationspinner/files/stationspinner-worker.conf.jinja
     - template: jinja
     - context:
       stationspinner: {{ stationspinner|yaml }}
-    - require:
-      - pkg: celery dist
 
-celerybeat config:
+celery_beat_config:
   file.managed:
-    - name: /etc/default/stationspinner-beat
+    - name: /etc/sysconfig/stationspinner-beat
     - source: salt://armada/stationspinner/files/stationspinner-beat.conf
-    - require:
-      - pkg: celery dist
 
-celeryd initscript:
+celery_worker_unit:
   file.managed:
-    - name: /etc/init.d/stationspinner-worker
-    - source: salt://armada/stationspinner/files/stationspinner-worker.init
+    - name: /etc/systemd/system/stationspinner-worker.service
+    - source: salt://armada/stationspinner/files/stationspinner-worker.service
     - mode: 755
     - require:
-      - file: celeryd config
+      - file: celery_worker_config
 
-celerybeat initscript:
+celery_beat_unit:
   file.managed:
-    - name: /etc/init.d/stationspinner-beat
-    - source: salt://armada/stationspinner/files/stationspinner-beat.init
+    - name: /etc/systemd/system/stationspinner-beat.service
+    - source: salt://armada/stationspinner/files/stationspinner-beat.service
     - mode: 755
     - require:
-      - file: celerybeat config
+      - file: celery_beat_config
 
 
 {% if not stationspinner.debug %}
-celeryd service:
+celery_worker_service:
   service.running:
     - name: stationspinner-worker
     - enable: True
     - running: True
     - require:
-      - file: celeryd initscript
-      - file: celery rundir
-      - file: celery logdir
+      - file: celery_worker_config
+      - file: celery_rundir
+      - file: celery_logdir
+      - file: celery_worker_unit
 
-manual restart celeryd:
+celery_worker_trigger_restart:
   cmd.wait:
-    - name: service stationspinner-worker restart
+    - name: systemctl restart stationspinner-worker
     - watch:
-      - git: stationspinner code
+      - git: stationspinner_code
 
-celerybeat service:
+celery_beat_service:
   service.running:
     - name: stationspinner-beat
     - enable: True
     - running: True
     - require:
-      - file: celerybeat initscript
-      - file: celery rundir
-      - file: celery logdir
+      - file: celery_beat_config
+      - file: celery_rundir
+      - file: celery_logdir
+      - file: celery_beat_unit
 
-manual restart beat:
+celery_beat_trigger_restart:
   cmd.wait:
-    - name: service stationspinner-beat restart; service stationspinner-beat restart
+    - name: systemctl stop stationspinner-beat; systemctl start stationspinner-beat
     - watch:
-      - git: stationspinner code
+      - git: stationspinner_code
 
-{% endif %}
 
-bootstrap universe:
+stationspinner_bootstrap_universe:
   cmd.run: 
     - name: 'source ../env/bin/activate; python manage.py bootstrap'
     - user: stationspinner
     - shell: /bin/bash
     - cwd: '/srv/www/stationspinner/web'
+    - require:
+      - service: celery_worker_service
 
 {% for market in stationspinner.markets %}
 {{ market }} market indexing:
@@ -116,3 +110,4 @@ bootstrap universe:
     - cwd: '/srv/www/stationspinner/web'
 {% endfor %}
 
+{% endif %}

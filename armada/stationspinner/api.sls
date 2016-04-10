@@ -2,56 +2,53 @@
 {% set db = salt["pillar.get"]("postgres", {}) %}
 
 include:
-  - uwsgi
   - .base
 
-uwsgi_member:
-  user.present:
-    - name: stationspinner
-    - groups:
+uwsgi_dependencies:
+  pkg.installed:
+    - names:
       - uwsgi
+      - uwsgi-plugin-python
+
+uwsgi_service:
+  service.running:
+    - name: uwsgi
+    - enable: True
+    - reload: True
+    - require:
+      - pkg: uwsgi_dependencies
 
 # Installed and configured. Now we just need uwsgi and webserver to setup
 
-uwsgi config:
+stationspinner_uwsgi_config:
   file.managed:
-    - name: /etc/uwsgi/apps-available/stationspinner.ini
+    - name: /etc/uwsgi.d/stationspinner.ini
+    - user: stationspinner
+    - group: {{ stationspinner.static_group }}
     - source: salt://armada/stationspinner/files/stationspinner.ini.jinja
     - template: jinja
     - context:
       stationspinner: {{ stationspinner|yaml }}
-
-# This should trigger the uwsgi emperor to start stationspinner
-
-{% if not stationspinner.debug %}
-uwsgi enabled:
-  file.symlink:
-    - name: /etc/uwsgi/apps-enabled/stationspinner.ini
-    - target: /etc/uwsgi/apps-available/stationspinner.ini
-{% endif %}
+    - require:
+      - user: stationspinner_user
 
 {% if not stationspinner.debug %}
-trigger uwsgi reload:
+stationspinner_trigger_uwsgi_reload:
   cmd.run:
     - name: 'touch /srv/www/stationspinner/reload-stationspinner'
     - user: stationspinner
     - shell: /bin/bash
     - require:
-      - file: uwsgi enabled
+      - service: uwsgi_service
 
-collect static files:
+stationspinner_collect_static_files:
   cmd.run: 
     - name: 'source ../env/bin/activate; echo yes | python manage.py collectstatic'
     - user: stationspinner
     - shell: /bin/bash
     - cwd: '/srv/www/stationspinner/web'
-
-fix static files ownership:
-  file.directory:
-    - name: '{{ stationspinner.static_root }}'
-    - group: '{{ stationspinner.static_group }}'
-    - recurse:
-      - group
+    - require:
+      - git: stationspinner_code
 
 {% endif %}
 

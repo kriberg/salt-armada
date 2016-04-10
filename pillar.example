@@ -1,8 +1,7 @@
 # /srv/pillar/armada/armada.sls
 armada:
   debug: False
-  static_user: www-data
-  static_group: www-data
+  static_group: nginx
   server_name: localhost
   ssl: False
   ssl_certificate: '/etc/ssl/certs/ssl-cert-snakeoil.pem'
@@ -17,11 +16,11 @@ postgres:
 
   lookup:
     {% if grains['os_family'] == 'RedHat' %}
-    pkg: 'postgresql94'
-    pg_hba: '/var/lib/pgsql/9.4/data/pg_hba.conf'
+    pkg: 'postgresql95'
+    pg_hba: '/var/lib/pgsql/9.5/data/pg_hba.conf'
     {% else %}
-    pg_hba: '/etc/postgresql/9.4/main/pg_hba.conf'
-    pkg: 'postgresql-9.4'
+    pg_hba: '/etc/postgresql/9.5/main/pg_hba.conf'
+    pkg: 'postgresql-9.5'
     {% endif %}
 
   users:

@@ -1,136 +1,112 @@
 {% set armada = salt["pillar.get"]("armada", {}) %}
-node 5:
+node_5:
   cmd.run:
-    name: 'curl -sL https://deb.nodesource.com/setup_5.x | bash -'
-    onlyif: 'test ! -f /etc/apt/sources.list.d/nodesource.list'
+    - name: 'curl --silent --location https://rpm.nodesource.com/setup_5.x | bash -'
+    - onlyif: 'test ! -f /etc/apt/sources.list.d/nodesource.list'
 
-armada platform dependencies:
+armada_platform_dependencies:
   pkg.installed:
     - names: 
       - git
       - nginx
       - nodejs
-      - npm
-      - build-essential
-      - openssl
+      - gcc
+      - gcc-c++
+      - openssl-devel
     - require:
-      - cmd: node 5
+      - cmd: node_5
 
-armada service directory:
+armada_service_directory:
   file.directory:
-    - name: /srv/www/armada
+    - name: /srv/www/armada/
     - makedirs: True
-    - user: {{ armada.static_user }}
-    - group: {{ armada.static_group }}
+    - user: stationspinner
+    - group: stationspinner
     
-javascript tools:
+armada_javascript_tools:
   npm.installed:
     - pkgs:
       - bower
       - webpack@1.12.14
       - gulp
     - require:
-      - pkg: armada platform dependencies
+      - pkg: armada_platform_dependencies
 
 #
 # Code checkout and nginx config
 #
 
 {% if not armada.debug %}
-armada code:
+armada_code:
   git.latest:
     - name: https://github.com/kriberg/armada.git
     - target: /srv/www/armada/
-    - user: {{ armada.static_user }}
+    - user: stationspinner
     - require:
-      - pkg: armada platform dependencies
-      - file: armada service directory
+      - pkg: armada_platform_dependencies
+      - file: armada_service_directory
 
-proper rights:
-  file.directory:
-    - name: /srv/www/armada
-    - user: {{ armada.static_user }}
-    - group: {{ armada.static_group }}
-    - recurse:
-      - user
-      - group
-
-generate dhparam:
+nginx_generate_dhparam:
   cmd.run:
     - name: 'openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048'
     - onlyif: 'test ! -f /etc/ssl/certs/dhparam.pem'
 
-armada site config:
+armada_site_config:
   file.managed:
-    - name: /etc/nginx/sites-available/armada-site
-    - source: salt://armada/armada/armada-site.jinja
+    - name: /etc/nginx/conf.d/armada-site.conf
+    - source: salt://armada/armada/armada-site.conf.jinja
     - template: jinja
     - context:
       armada: {{ armada|yaml }}
     - require:
-      - pkg: armada platform dependencies
+      - pkg: armada_platform_dependencies
 
-enabled site:
-  file.symlink:
-    - name: /etc/nginx/sites-enabled/armada-site
-    - target: /etc/nginx/sites-available/armada-site
-    - require:
-      - file: armada site config
-
-npm bootstrap:
+armada_npm_bootstrap:
   npm.bootstrap:
     - name: /srv/www/armada
-    - user: {{ armada.static_user }}
+    - user: stationspinner
     - require:
-      - npm: javascript tools
-      - file: proper rights
-      - file: armada service directory
+      - npm: armada_javascript_tools
+      - file: armada_service_directory
 
 
-build bundle:
+armada_build_bundle:
   cmd.run:
     - name: gulp
     - cwd: /srv/www/armada
-    - user: {{ armada.static_user }}
+    - user: stationspinner
     - require:
-      - npm: npm bootstrap
-      - file: proper rights
+      - npm: armada_npm_bootstrap
+
 {% else %}
 
-armada site config:
+armada_site_config:
   file.managed:
-    - name: /etc/nginx/sites-available/armada-debug
-    - source: salt://armada/armada/armada-debug.jinja
+    - name: /etc/nginx/conf.d/armada-debug.conf
+    - source: salt://armada/armada/armada-debug.conf.jinja
     - template: jinja
     - context:
       armada: {{ armada|yaml }}
     - require:
-      - pkg: armada platform dependencies
+      - pkg: armada_platform_dependencies
 
-enabled site:
-  file.symlink:
-    - name: /etc/nginx/sites-enabled/armada-debug
-    - target: /etc/nginx/sites-available/armada-debug
-    - require:
-      - file: armada site config
 {% endif %}
 
 #
 # Restart nginx
 #
 
-nginx service:
+nginx_service:
   service.running:
     - name: nginx
     - enable: True
     - running: True
     - require:
-      - pkg: armada platform dependencies
-      - file: armada site config
-      - file: enabled site
+      - pkg: armada_platform_dependencies
+      - file: armada_site_config
       {% if not armada.debug %}
-      - git: armada code
+      - git: armada_code
       {% endif %}
     - watch:
-      - file: armada site config
-      - file: enabled site
+      - file: armada_site_config
+

@@ -6,10 +6,10 @@ After=network.target redis.target
 Type=simple
 User=stationspinner
 Group=stationspinner
-EnvironmentFile=-/etc/default/stationspinnet-beat
+EnvironmentFile=/etc/sysconfig/stationspinner-beat
 WorkingDirectory=/srv/www/stationspinner/web
 # run ExecStartPre as priviledged user and set up /var/run
-ExecStart=${CELERY_BIN} beat -A ${CELERY_APP} \
+ExecStart=/srv/www/stationspinner/env/bin/celery beat -A ${CELERY_APP} \
     --workdir=${CELERYBEAT_CHDIR} \
     --pidfile=${CELERYBEAT_PID_FILE} \
     --logfile=${CELERYBEAT_LOG_FILE} \
